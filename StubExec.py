@@ -1,10 +1,13 @@
 import subprocess;subprocess.run("", shell=True)# Enable VT100 on windows/Color code support
-import sys
-import puremagic as pm
-from pathlib import Path
-import struct
-import shutil
-import os
+try:
+    import sys
+    import puremagic as pm
+    from pathlib import Path
+    import struct
+    import shutil
+    import os
+except (ImportError, ModuleNotFoundError):
+    print("\033[31mPackage does not have all modules to run!\033[0m")
 
 if getattr(sys, 'frozen', False):
     STUB_DIR = Path(sys.executable).parent / "Stubs"

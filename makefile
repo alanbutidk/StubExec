@@ -65,3 +65,4 @@ nuitka: StubExec.py
 clean:
 	rm -f Stubs/$(TARGET)
 	rm -f $(NUITKA_OUT)
+	rm -rf StubExec.build StubExec.dist
