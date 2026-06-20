@@ -55,7 +55,7 @@ def StubELF(message: str) -> None:
         end = '<' if is_le else '>'
 
         if is_64bit:
-            e_shoff     = struct.unpack(f'{end}Q', stub_data[32:40])[0]
+            e_shoff     = struct.unpack(f'{end}Q', stub_data[40:48])[0]
             e_shentsize = struct.unpack(f'{end}H', stub_data[58:60])[0]
             e_shnum     = struct.unpack(f'{end}H', stub_data[60:62])[0]
             e_shstrndx  = struct.unpack(f'{end}H', stub_data[62:64])[0]
@@ -101,11 +101,31 @@ def StubELF(message: str) -> None:
             sys.exit(1)
 
         message_bytes = (message + '\x00').encode('utf-8')
-        if len(message_bytes) > target_size:
-            print(f"\033[31mMessage too long! Max: {target_size - 1} bytes\033[0m")
+
+        section_data = stub_data[target_offset:target_offset + target_size]
+        inject_pos = None
+        i = 0
+        while i < target_size:
+            if section_data[i] >= 0x20 and section_data[i] < 0x7f:
+                j = i
+                while j < target_size and section_data[j] != 0:
+                    j += 1
+                if j < target_size and j > i + 2:
+                    inject_pos = i
+                    break
+            i += 1
+
+        if inject_pos is None:
+            inject_pos = 0
+
+        inject_offset = target_offset + inject_pos
+        available = target_size - inject_pos
+
+        if len(message_bytes) > available:
+            print(f"\033[31mMessage too long! Max: {available - 1} bytes\033[0m")
             sys.exit(1)
 
-        stub_data[target_offset:target_offset + len(message_bytes)] = message_bytes
+        stub_data[inject_offset:inject_offset + len(message_bytes)] = message_bytes
 
         out_path = Path("Stubbed")
         with open(out_path, 'wb') as f:
