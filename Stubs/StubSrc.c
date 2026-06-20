@@ -4,8 +4,9 @@
 #pragma section(".data", read, write)
 __declspec(allocate(".data")) char InjectedMsg[256] = "StubExec says hi!";
 #elif defined(__linux__)
-char injected_message[1024] __attribute__((section(".data"), used)) =
+char InjectedMsg[1024] __attribute__((section(".data"), used)) =
     "Hi from stubexec!";
+
 #else
 #error "Unknown system!"
 #endif
