@@ -1,5 +1,5 @@
 CC := gcc
-CFLAGS := -Wall
+CFLAGS := -Wall -O0
 
 ifeq ($(OS),Windows_NT)
 	PYNAME := python
@@ -65,4 +65,4 @@ nuitka: StubExec.py
 clean:
 	rm -f Stubs/$(TARGET)
 	rm -f $(NUITKA_OUT)
-	rm -rf StubExec.build StubExec.dist
+	rm -rf StubExec.build StubExec.dist StubExec.onefile-build
